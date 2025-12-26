@@ -7,6 +7,8 @@ A tentative workspace for developing the SoDeV demo.
 **Prerequisites:** `moulin`, `ninja`
 
 ```bash
+git clone --recurse-submodules https://github.com/automotive-grade-linux/sodev-demo-workspace
+cd sodev-demo-workspace
 ./build.sh
 sudo bmaptool copy --nobmap external/meta-rcar-demo/work_v4hsbc_xen/full.img /path/to/sd/device
 ```
@@ -26,3 +28,10 @@ u-boot => saveenv
 ```
 
 4. Reboot the board.
+
+
+## Planned Action Items
+
+- Replace the Android DomU with an AGL IVI guest image
+- Replace the Weston desktop Linux DomU with an AGL IC guest image
+- Performance and appearance tuning
