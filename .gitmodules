@@ -1,0 +1,4 @@
+[submodule "external/meta-rcar-demo"]
+	path = external/meta-rcar-demo
+	url = https://github.com/automotive-grade-linux/meta-rcar-demo
+	branch = sodev_sparrowhawk_work
