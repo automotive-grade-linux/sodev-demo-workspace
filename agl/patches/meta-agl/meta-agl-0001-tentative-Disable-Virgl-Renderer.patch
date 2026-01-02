@@ -1,0 +1,28 @@
+From cbb104338a745166736c013219d144fb90300879 Mon Sep 17 00:00:00 2001
+From: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
+Date: Thu, 1 Jan 2026 20:19:04 +0900
+Subject: [PATCH] tentative: Disable Virgl Renderer
+
+The Virgl renderer appears to be unstable for unknown reasons.
+We are disabling it temporarily until the root cause becomes clear.
+
+Change-Id: I1b0809e8fe8d300e5b69047e89075435c893e03e
+Signed-off-by: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
+---
+ meta-agl-bsp/conf/include/agl_virtio-aarch64.inc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/meta-agl-bsp/conf/include/agl_virtio-aarch64.inc b/meta-agl-bsp/conf/include/agl_virtio-aarch64.inc
+index 75532221..b95458da 100644
+--- a/meta-agl-bsp/conf/include/agl_virtio-aarch64.inc
++++ b/meta-agl-bsp/conf/include/agl_virtio-aarch64.inc
+@@ -7,5 +7,4 @@ WKS_FILE = "directdisk.wks.in"
+ # Simplest possible option
+ AGL_DEFAULT_IMAGE_FSTYPES = "ext4"
+ 
+-# Need to run QEMU with virtio-gpu device
+-PACKAGECONFIG:append:pn-qemu-system-native = " virglrenderer glx gtk+"
++WESTON_USE_PIXMAN = "1"
+-- 
+2.34.1
+

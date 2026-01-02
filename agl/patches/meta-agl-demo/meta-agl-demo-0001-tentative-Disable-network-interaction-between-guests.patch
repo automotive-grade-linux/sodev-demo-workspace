@@ -1,0 +1,41 @@
+From 1a7d078984e54e419f73724c41a91f1bbe130377 Mon Sep 17 00:00:00 2001
+From: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
+Date: Thu, 1 Jan 2026 20:22:29 +0900
+Subject: [PATCH] tentative: Disable network interaction between guests
+
+We are disabling network communication between guests until a proper
+network configuration is set up in the Xen environment.
+
+Change-Id: Ib18f0c3f298d4ec8526dd9bed866f788068fc11c
+Signed-off-by: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
+---
+ .../files/cluster-dashboard.yaml.kvm-demo                     | 2 +-
+ .../flutter-ics-homescreen/files/ics-homescreen.yaml.kvm-demo | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/recipes-demo/flutter-cluster-dashboard/files/cluster-dashboard.yaml.kvm-demo b/recipes-demo/flutter-cluster-dashboard/files/cluster-dashboard.yaml.kvm-demo
+index 17e5888..77508bd 100644
+--- a/recipes-demo/flutter-cluster-dashboard/files/cluster-dashboard.yaml.kvm-demo
++++ b/recipes-demo/flutter-cluster-dashboard/files/cluster-dashboard.yaml.kvm-demo
+@@ -1,4 +1,4 @@
+-hostname: 172.16.10.2
++hostname: localhost
+ authorization : "/etc/xdg/AGL/cluster-dashboard/cluster-dashboard.token"
+ use-tls : true
+ tls-server-name : "localhost"
+diff --git a/recipes-demo/flutter-ics-homescreen/files/ics-homescreen.yaml.kvm-demo b/recipes-demo/flutter-ics-homescreen/files/ics-homescreen.yaml.kvm-demo
+index 22e7e39..8acc7b2 100644
+--- a/recipes-demo/flutter-ics-homescreen/files/ics-homescreen.yaml.kvm-demo
++++ b/recipes-demo/flutter-ics-homescreen/files/ics-homescreen.yaml.kvm-demo
+@@ -5,6 +5,6 @@ kuksa:
+   use-tls : true
+   tls-server-name : localhost
+ radio:
+-  hostname : 172.16.10.1
++  hostname : localhost
+ mpd:
+-  hostname : 172.16.10.1
++  hostname : localhost
+-- 
+2.34.1
+

@@ -1,0 +1,8 @@
+agl/.repo
+agl/bsp
+agl/build
+agl/external
+agl/meta-agl
+agl/meta-agl-demo
+agl/meta-agl-devel
+agl/site.conf
