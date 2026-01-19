@@ -62,11 +62,11 @@ if [ -e site.conf ]; then
     dieif cd ../..
 fi
 
-IFS=$'\n' read -rd '' -a patches <<< "$(realpath patches/meta-agl/* 2>/dev/null)"
+IFS=$'\n' read -rd '' -a patches <<< "$(ls patches/meta-agl/*.patch 2>/dev/null | xargs realpath 2>/dev/null)"
 for patch in "${patches[@]}"; do
     ! git -C meta-agl apply --reverse --check "$patch" 2>/dev/null && dieif git -C meta-agl am "$patch" && echo "$patch applied"
 done
-IFS=$'\n' read -rd '' -a patches <<< "$(realpath patches/meta-agl-demo/* 2>/dev/null)"
+IFS=$'\n' read -rd '' -a patches <<< "$(ls patches/meta-agl-demo/*.patch 2>/dev/null | xargs realpath 2>/dev/null)"
 for patch in "${patches[@]}"; do
     ! git -C meta-agl-demo apply --reverse --check "$patch" 2>/dev/null && dieif git -C meta-agl-demo am "$patch" && echo "$patch applied"
 done
