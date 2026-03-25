@@ -43,6 +43,9 @@ if [ ! -f "external/meta-rcar-demo/firmware/rcar_gen4_pcie.bin" ]; then
     dieif curl -o external/meta-rcar-demo/firmware/rcar_gen4_pcie.bin 'https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/rcar_gen4_pcie.bin?id=e56e0a4c8985ec8559aa7b8a831cb841dc8505e6'
 fi
 
+mkdir -p external/meta-rcar-demo/work_v4hsbc_xen/yocto/common_data/downloads
+mkdir -p external/meta-rcar-demo/work_v4hsbc_xen/yocto/common_data/sstate
+
 # build AGL images
 agl_branch="trout-sodev"
 local_conf_patch_tag="### This is modified by build.sh ###"
