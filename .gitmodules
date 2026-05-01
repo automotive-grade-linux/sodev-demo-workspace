@@ -1,3 +1,6 @@
+[submodule "flatcar/scripts"]
+	path = flatcar/scripts
+	url = https://github.com/flatcar/scripts.git
 [submodule "external/meta-rcar-demo"]
 	path = external/meta-rcar-demo
 	url = https://github.com/automotive-grade-linux/meta-rcar-demo
