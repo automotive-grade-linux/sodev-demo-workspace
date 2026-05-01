@@ -31,12 +31,16 @@ cmdcheck () {
     done
 }
 
+build_opts=()
+
 # setting value for flatcar
-ENABLE_FLATCAR_BUILD=yes
+ENABLE_FLATCAR_BUILD=no
 FLATCAR_ARCH=arm64
 FLATCAR_BOARD="${FLATCAR_ARCH}-usr"
 FLATCAR_CONTAINER_NAME=flatcar-sodev-build
 FLATCAR_ARTIFACT_ROOT=/home/sdk/trunk/src/scripts/artifacts
+
+[ "$ENABLE_FLATCAR_BUILD" = "yes" ] && build_opts+=(--enable-flatcar)
 
 cmdcheck moulin ninja
 
@@ -167,4 +171,4 @@ dieif bash -c " \
     "
 dieif cd "$workdir"
 
-./external/meta-rcar-demo/build.sh -a -u -v -r -z --enable-flatcar
+./external/meta-rcar-demo/build.sh -u -v -r -z "${build_opts[@]}"
