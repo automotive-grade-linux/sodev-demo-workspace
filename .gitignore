@@ -6,3 +6,12 @@ agl/meta-agl
 agl/meta-agl-demo
 agl/meta-agl-devel
 agl/site.conf
+
+# Flatcar build artifacts and logs
+flatcar/build-flatcar.log
+flatcar/portage-logs/
+flatcar/artifacts/
+flatcar/flatcar_production_qemu_uefi_image.img
+flatcar/flatcar_production_qemu_uefi_image.raw
+flatcar/kernel/vmlinuz-a
+flatcar/kernel/vmlinuz-b
