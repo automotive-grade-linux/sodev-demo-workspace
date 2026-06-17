@@ -62,15 +62,23 @@ cleanup() {
     rm -f "${VERSION_FILE_BAK}"
 
     if [ "${exit_code}" -ne 0 ]; then
-        # On failure, get the portage log filess out and point the user to them.
+        # On failure, get the portage log files out and point the user to them.
         extract_portage_logs
         echo ""
         echo "=================================================================="
         echo "ERROR: Flatcar build failed (exit code ${exit_code})"
+        echo "Container '${FLATCAR_CONTAINER_NAME}' is preserved for debugging."
+        echo "  Inspect it with:  ./run_sdk_container -n ${FLATCAR_CONTAINER_NAME} -t"
         echo "Logs for investigation:"
         echo "  - Full build log : ${BUILD_LOG}"
         echo "  - Portage logs   : ${WORKDIR}/flatcar/portage-logs/"
         echo "=================================================================="
+    else
+        echo "--- Cleanup: removing SDK build container '${FLATCAR_CONTAINER_NAME}' ---"
+        docker rm -f "${FLATCAR_CONTAINER_NAME}" >/dev/null 2>&1 || \
+            echo "WARNING: failed to remove container '${FLATCAR_CONTAINER_NAME}'"
+        echo "  Container removed. Board sysroot preserved at:"
+        echo "    ${HOST_SYSROOT}"
     fi
 }
 trap cleanup EXIT
@@ -93,6 +101,23 @@ HOST_ARTIFACT_DIR="${WORKDIR}/flatcar/artifacts"
 dieif mkdir -p "${HOST_ARTIFACT_DIR}"
 ARTIFACT_MOUNT=(-m "${HOST_ARTIFACT_DIR}:${FLATCAR_ARTIFACT_ROOT}")
 
+# Persist the board sysroot across container deletions via a bind mount.
+HOST_SYSROOT="${WORKDIR}/flatcar/build-sysroot/${FLATCAR_BOARD}"
+dieif mkdir -p "${HOST_SYSROOT}"
+SYSROOT_MOUNT=(-m "${HOST_SYSROOT}:/build/${FLATCAR_BOARD}")
+
+# Initialize the host sysroot from the SDK image if empty. 
+if [ -z "$(ls -A "${HOST_SYSROOT}" 2>/dev/null)" ]; then
+    echo "--- Initializing host sysroot from SDK image (first-time setup) ---"
+    docker pull "${sdk_image}" 2>/dev/null || true
+
+    dieif docker run --rm -u 0 --entrypoint=bash \
+        -v "${HOST_SYSROOT}:/dest" \
+        "${sdk_image}" \
+        -c "cp -a /build/${FLATCAR_BOARD}/. /dest/"
+    echo "  Sysroot initialized at: ${HOST_SYSROOT}"
+fi
+
 # create version.txt
 (
     source sdk_lib/sdk_container_common.sh
@@ -103,7 +128,7 @@ ARTIFACT_MOUNT=(-m "${HOST_ARTIFACT_DIR}:${FLATCAR_ARTIFACT_ROOT}")
 echo "--- Flatcar: Configuring wget User-Agent for distfile fetches ---"
 dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" \
     -a "${FLATCAR_ARCH}" -v "${flatcar_version}" \
-    -C "${sdk_image}" "${ARTIFACT_MOUNT[@]}" \
+    -C "${sdk_image}" "${ARTIFACT_MOUNT[@]}" "${SYSROOT_MOUNT[@]}" \
     sudo tee -a /etc/wgetrc \
     <<<'user_agent = sodev-flatcar-build/1.0 (+https://github.com/example/repo)'
 
@@ -111,17 +136,17 @@ dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" \
 echo "--- Flatcar: Building packages ---"
 dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" \
     -a "${FLATCAR_ARCH}" -v "${flatcar_version}" \
-    -C "${sdk_image}" "${ARTIFACT_MOUNT[@]}" \
+    -C "${sdk_image}" "${ARTIFACT_MOUNT[@]}" "${SYSROOT_MOUNT[@]}" \
     ./build_packages --board="${FLATCAR_BOARD}" --nogetbinpkg
 
 # Step2: build image
 echo "--- Flatcar: Building image ---"
 dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" -a "${FLATCAR_ARCH}" \
-    "${ARTIFACT_MOUNT[@]}" \
+    "${ARTIFACT_MOUNT[@]}" "${SYSROOT_MOUNT[@]}" \
     ./set_official --board="${FLATCAR_BOARD}" --noofficial
 
 dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" -a "${FLATCAR_ARCH}" \
-    "${ARTIFACT_MOUNT[@]}" \
+    "${ARTIFACT_MOUNT[@]}" "${SYSROOT_MOUNT[@]}" \
     ./build_image --board="${FLATCAR_BOARD}" \
         --output_root="${FLATCAR_ARTIFACT_ROOT}" --nogetbinpkg --replace \
         prod
@@ -129,7 +154,7 @@ dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" -a "${FLATCAR_ARCH}" \
 # Step3: convert image to qemu uefi image
 echo "--- Flatcar: Converting to QEMU UEFI image ---"
 dieif ./run_sdk_container -n "${FLATCAR_CONTAINER_NAME}" -a "${FLATCAR_ARCH}" \
-    "${ARTIFACT_MOUNT[@]}" \
+    "${ARTIFACT_MOUNT[@]}" "${SYSROOT_MOUNT[@]}" \
     ./image_to_vm.sh --format "qemu_uefi" --board="${FLATCAR_BOARD}" \
         --from "${FLATCAR_ARTIFACT_ROOT}/${FLATCAR_BOARD}/latest" \
         --image_compression_formats=none --nogetbinpkg

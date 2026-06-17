@@ -11,6 +11,7 @@ agl/site.conf
 flatcar/build-flatcar.log
 flatcar/portage-logs/
 flatcar/artifacts/
+flatcar/build-sysroot/
 flatcar/flatcar_production_qemu_uefi_image.img
 flatcar/flatcar_production_qemu_uefi_image.raw
 flatcar/kernel/vmlinuz-a
