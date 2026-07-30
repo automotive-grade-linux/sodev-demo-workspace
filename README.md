@@ -4,7 +4,15 @@ A tentative workspace for developing the SoDeV demo.
 
 ## How to Build
 
-**Prerequisites:** `moulin`, `ninja`
+**Prerequisites:** `moulin@v0.28`, `ninja`
+
+Install `moulin` v0.28:
+
+```bash
+pip3 install --user git+https://github.com/xen-troops/moulin@v0.28
+```
+
+Build and flash:
 
 ```bash
 git clone --recurse-submodules https://github.com/automotive-grade-linux/sodev-demo-workspace
