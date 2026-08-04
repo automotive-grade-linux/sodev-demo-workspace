@@ -2,6 +2,20 @@
 # sodev-demo-workspace
 A tentative workspace for developing the SoDeV demo.
 
+## About This Repository
+
+This repository holds an experimental integration of [**SoDeV**](https://lf-automotivelinux.atlassian.net/wiki/spaces/VE/pages/602996743/AGL+SDV+Reference+Platfrom+-+SoDeV), an Automotive Grade Linux (AGL) initiative aimed at building a Software-Defined Vehicle (SDV) reference platform.
+
+The current implementation is **provisional**. It is intended as a base that will
+eventually be merged into the official AGL distribution, the
+[AGL Unified Code Base (UCB)](https://wiki.automotivelinux.org/agl-distro/release-notes#latest_stable_release).
+
+Planned changes toward that goal include:
+
+- Unifying the per-target-architecture integrations into a single common integration.
+- Switching to an upstream-oriented integration based on `meta-virtualization`, and retiring the downstream patches as much as possible.
+- Rebuilding DomD based on AGL.
+
 ## How to Build
 
 **Prerequisites:** `moulin@v0.28`, `ninja`
